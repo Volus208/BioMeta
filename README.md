@@ -36,7 +36,7 @@ This is a list of every single part in the keyboard
 - Foam between the PCB and the back plate, I just cut mine with scissors
 
 ## The PCB
-By far the hardest and most expensive part. The gerber files are designed to comply with JLCPCB's tolerances. However, if you upload a single file with a visible cutout that is made to snap the to halves apart, they will charge you more. This is why there are only two printed lines to mark where you should cut using a CNC using the provided SVG file located in `pcb/stencil/pcb-Edge_Cuts.svg`. If you don't mind paying more, you can just replace these lines with "edge.cut" lines. As you can see, their shape is made so the two halves can be joined if you want a more traditionnal layout.
+By far the hardest and most expensive part. The gerber files are designed to comply with JLCPCB's tolerances. However, if you upload a single file with a visible cutout that is made to snap the to halves apart, they will charge you more. This is why there are only two printed lines to mark where you should cut using a CNC using the provided SVG file located in `pcb/cnc_cut.svg`. If you don't mind paying more, you can just replace these lines with "edge.cut" lines in the KiCad file. As you can see, their shape is made so the two halves can be joined if you want a more traditional layout.
 Soldering the tiny 2x2mm LEDS can be done in 3 ways :
 - asking the PCB manufacturer to do it
 - the traditionnal SMD way, making a soldering stencil and using thermal paste
@@ -49,3 +49,18 @@ Soldering the tiny 2x2mm LEDS can be done in 3 ways :
     - repeat 97 more times. See why I don't recommend this way to everyone ?
 
 Don't worry, soldering the diodes is easier and can be done in a few minutes. All of the other components are THT.
+
+## The backplate
+The SVG file is in `pcb/backplate.svg`. I made mine out of aluminium, but you can really use anything you want. If you are cutting your backplate with a CNC, remember to file the corners where the two parts meet. If you are using a laser cutter, they should fit together without any post processing.
+
+## The firmware
+This keyboard doesn't run QMK because that firmware is missing two features : finger print sensor support and a communication protocol between the two arduinos that isn't I²C or UART. The second reason is the biggest problem : the UART is already used for the fingerprint sensor and the I²C protocol seems to have problems with the Adafruit Neopixel library (it has something to do with interrupts). This is why I had to make my own protocol, which runs at an undefined frequency.
+### Communication protocol between the two parts
+This protocol doesn't support hotplug so you might need to restart the keyboard if one of the two Arduinos reboot.
+
+COM_DELAY is configurable in the code by modifying COM_SPEED. The communication can probably be a lot faster, feel free to try and push it as fast as possible until you get errors.
+### Fingerprint ID
+The fingerprint sensor feature types a string of you choice automatically if your fingerprint is identified, basically like a macro. To set that string, enter it in `arduino_code/left_part/password.h`.
+To use it, press AltGr + Fn to begin the serial communication with the sensor. When a valid fingerprint is detected, the password will be sent and the serial port will be closed.
+### Fn key
+Did you know that the Fn key isn't actually a key ? There is no ASCII code for it, so only the keyboard can recognize it for custom actions. Here, it changes the LED lighting mode or enables the fingerprint sensor.
