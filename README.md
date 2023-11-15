@@ -20,7 +20,7 @@ This is a list of every single part in the keyboard
 - 7 sets of stabilizers
 - 98 1N4148W-TP diodes
 - 98 WS2812B-2020 addressable LEDs
-- 98 switches, I used designed the PCB for Kailh Box White v2
+- 98 switches, I designed the PCB for Kailh Box White v2
 - FPM10A fingerprint sensor
 - Fingerprint sensor holder, made of :
     - the main 3D printed part
@@ -57,7 +57,7 @@ The SVG file is in `pcb/backplate.svg`. I made mine out of aluminium, but you ca
 This keyboard doesn't run QMK because that firmware is missing two features : finger print sensor support and a communication protocol between the two arduinos that isn't I²C or UART. The second reason is the biggest problem : the UART is already used for the fingerprint sensor and the I²C protocol seems to have problems with the Adafruit Neopixel library (it has something to do with interrupts). This is why I had to make my own protocol, which runs at an undefined frequency.
 ### Communication protocol between the two parts
 This protocol doesn't support hotplug so you might need to restart the keyboard if one of the two Arduinos reboot.
-
+![How it works](/protocol.png)
 COM_DELAY is configurable in the code by modifying COM_SPEED. The communication can probably be a lot faster, feel free to try and push it as fast as possible until you get errors.
 ### Fingerprint ID
 The fingerprint sensor feature types a string of you choice automatically if your fingerprint is identified, basically like a macro. To set that string, enter it in `arduino_code/left_part/password.h`.
